@@ -1,0 +1,106 @@
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 4px 16px 16px 16px; /* Reduced top and bottom padding */
+}
+.btnCancel {
+  background: #2f54e5;
+  color: #201c1c;
+  border: 1px solid #bfcaf0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btnCancel:hover {
+  background: #a3b2f1;
+  color: #fffefe;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 1rem;
+  margin-top: 4px; /* Significantly less space above table */
+  color: #24292f;
+}
+
+.table thead {
+  background: #f9f4fd;
+}
+
+.table th,
+.table td {
+  border: 1px solid #bfcaf0;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.table th {
+  color: #24292f;
+  font-weight: bold;
+  font-size: 1.03rem;
+  letter-spacing: 0.02em;
+}
+
+.footer {
+  color: #e3e4f7;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1.06rem;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 2px 8px 0 rgba(132, 79, 193, 0.04);
+  margin-top: 5px;
+  background-color: #9c8189;
+}
+
+
+/* ================== RESPONSIVE BREAKPOINTS ================== */
+
+/* Tablets */
+@media (max-width: 900px) {
+  .mainContent {
+    padding: 3px 3vw 12px 3vw;
+  }
+  .table th,
+  .table td {
+    font-size: 0.97rem;
+    padding: 8px 7px;
+  }
+  .footer {
+    font-size: 0.97rem;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+  .mainContent {
+    padding: 1px 1vw 7px 1vw;
+  }
+  .table {
+    font-size: 0.92rem;
+  }
+  .table th,
+  .table td {
+    font-size: 0.88rem;
+    padding: 6px 4px;
+  }
+  .footer {
+    font-size: 0.89rem;
+    padding: 7px 3px;
+    border-radius: 4px;
+  }
+  .pageWrapper {
+    min-height: 96vh;
+  }
+}

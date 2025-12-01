@@ -1,0 +1,172 @@
+.formPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f9fc;
+}
+
+.btnSubmit {
+  background: #3d73a0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 8px 20px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background 0.2s;
+}
+
+.btnSubmit:hover {
+  background: #877cb3;
+}
+
+.formHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 32px;
+}
+
+.formContainer {
+  background: #fff;
+  margin: 32px auto 0 auto;
+  padding: 32px 24px;
+  border: 1px solid #e5e5ec;
+  box-shadow: 0 2px 12px rgba(132, 79, 193, 0.05);
+  border-radius: 12px;
+  max-width: 525px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formContainer h3 {
+  font-size: 1.1rem;
+  color: #0f1845;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.formContainer input[type="text"],
+.formContainer input[type="email"],
+.formContainer input[type="number"],
+.formContainer textarea {
+  padding: 7px 12px;
+  border: 1px solid #bfcaf0;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-left: 14px;
+  flex: 1;
+  background: #f6f6fb;
+  transition: border 0.2s;
+}
+.formContainer input:focus,
+.formContainer textarea:focus {
+  outline: none;
+  border: 1.8px solid #844fc1;
+  background: #fff;
+}
+.formContainer textarea {
+  min-height: 60px;
+  resize: vertical;
+  width: 70%;
+}
+
+.formContainer input[type="radio"] {
+  margin: 0 6px 0 18px;
+}
+
+.btnSubmit {
+  width: 100%;
+}
+
+.footer {
+  color: #e3e4f7;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1.06rem;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 2px 8px 0 rgba(132, 79, 193, 0.04);
+  margin-top: 5px;
+  background-color: #9c8189;
+}
+
+
+/* ================== RESPONSIVE BREAKPOINTS ================== */
+
+/* Tablets */
+@media (max-width: 900px) {
+  .formHeader {
+    padding: 8px 12px;
+  }
+  .formContainer {
+    padding: 20px 10px;
+    gap: 10px;
+    max-width: 99vw;
+    min-width: 200px;
+  }
+  .formContainer h3 {
+    font-size: 1rem;
+    gap: 8px;
+  }
+  .formContainer textarea {
+    width: 95%;
+  }
+  .footer {
+    font-size: 0.94rem;
+  }
+}
+
+/* Phones */
+@media (max-width: 600px) {
+  .formPage {
+    min-height: 96vh;
+  }
+  .formHeader {
+    padding: 3px 1.5vw;
+    justify-content: center;
+  }
+  .formContainer {
+    padding: 9px 1vw;
+    margin: 16px auto 0 auto;
+    max-width: 100vw;
+    min-width: 120px;
+    border-radius: 6px;
+    gap: 7px;
+  }
+  .formContainer h3 {
+    font-size: 0.89rem;
+    gap: 5px;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 0 5px 0;
+  }
+  .formContainer input[type="text"],
+  .formContainer input[type="email"],
+  .formContainer input[type="number"],
+  .formContainer textarea {
+    font-size: 0.93rem;
+    margin-left: 0;
+    padding: 7px 9px;
+  }
+  .formContainer textarea {
+    min-height: 38px;
+    width: 100%;
+  }
+  .btnSubmit {
+    font-size: 0.89rem;
+    border-radius: 5px;
+    margin-left: 0;
+    padding: 7px 3px;
+  }
+  .footer {
+    font-size: 0.87rem;
+    padding: 5px 2px;
+    border-radius: 2px;
+  }
+}
