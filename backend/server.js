@@ -28,8 +28,23 @@ mongoose
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({ 
+        msg: "Email already exists",
+        type: "email"
+      });
+    }
+
+    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({ name, email, password: hashedPassword });
+    await User.create({ 
+      name, 
+      email: email.toLowerCase(), 
+      password: hashedPassword 
+    });
+    
     res.json({ msg: "User registered successfully" });
   } catch (err) {
     console.error(err);
@@ -41,13 +56,33 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
+    // Find user by email
+    const user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      // User not found - Email is incorrect
+      return res.status(404).json({ 
+        msg: "User not found",
+        type: "email"
+      });
+    }
+
+    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+    
+    if (!isMatch) {
+      // Wrong password - Password is incorrect
+      return res.status(401).json({ 
+        msg: "Password is incorrect",
+        type: "password"
+      });
+    }
+
+    // Success - Generate token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    
     res.json({ msg: "Login successful", token });
   } catch (err) {
     console.error(err);
@@ -121,7 +156,6 @@ app.put("/events/:id", async (req, res) => {
   }
 });
 
-
 // === DEPARTMENTS ===
 
 // Create Department
@@ -176,7 +210,6 @@ app.put("/departments/:id", async (req, res) => {
     res.status(500).json({ msg: "Error updating department" });
   }
 });
-
 
 // === EMPLOYEES ===
 
@@ -246,7 +279,6 @@ app.put("/employees/:id", async (req, res) => {
   }
 });
 
-
 // === PROJECTS ===
 
 // Create Project
@@ -308,7 +340,6 @@ app.put("/projects/:id", async (req, res) => {
     res.status(500).json({ msg: "Error updating project" });
   }
 });
-
 
 // Start Server
 app.listen(process.env.PORT || 5000, () =>

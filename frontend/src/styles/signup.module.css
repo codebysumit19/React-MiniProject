@@ -4,10 +4,11 @@
   flex-direction: column;
   background: #f8f9fc;
 }
+
 .header {
   display: flex;
   align-items: center;
-  justify-content: center;    /* Centers main content horizontally */
+  justify-content: center;
   background-color: #9C8189;
   border-radius: 10px;
   padding: 22px;
@@ -21,7 +22,6 @@
   transform: translateY(-50%);
 }
 
-/* Center the title in the flex row */
 .headerCenter {
   flex: 1;
   text-align: center;
@@ -34,7 +34,6 @@
   font-weight: 700;
 }
 
-
 .formWrapper {
   flex: 1;
   display: flex;
@@ -42,6 +41,7 @@
   justify-content: center;
   margin-top: 10px;
 }
+
 .formContainer {
   background: #fff;
   padding: 32px 28px;
@@ -54,18 +54,21 @@
   flex-direction: column;
   gap: 12px;
 }
+
 .formContainer h1 {
   text-align: center;
   font-size: 2rem;
   color: #363c66;
   margin-bottom: 12px;
 }
+
 .formContainer h3 {
   font-size: 1rem;
   color: #3937d8;
   margin-bottom: 2px;
   margin-top: 14px;
 }
+
 .formContainer input {
   padding: 8px 12px;
   border: 1px solid #bfcaf0;
@@ -75,11 +78,13 @@
   transition: border 0.2s;
   margin-bottom: 4px;
 }
+
 .formContainer input:focus {
   outline: none;
   border: 1.5px solid #3937d8;
   background: #fff;
 }
+
 .formContainer button[type="submit"] {
   background: #3937d8;
   color: #fff;
@@ -92,19 +97,118 @@
   margin-top: 18px;
   transition: background 0.18s;
 }
+
 .formContainer button[type="submit"]:hover {
   background: #6d628f;
 }
+
+.formContainer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .formContainer a {
   color: #3937d8;
   text-decoration: none;
   font-weight: 600;
 }
+
 .formContainer a:hover {
   text-decoration: underline;
 }
+
+/* Error and Warning Messages */
+.errorText {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin: 2px 0 0 0;
+}
+
+.warningText {
+  color: #f57c00;
+  font-size: 0.85rem;
+  margin: 4px 0;
+  background: #fff3e0;
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #f57c00;
+}
+
+/* Loading Overlay - Centered on page */
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.spinnerLarge {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #e0e0e0;
+  border-top-color: #3937d8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loadingText {
+  color: white;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Password Info Box with List */
+.passwordInfo {
+  background: #f0f7ff;
+  border: 1px solid #b3d7ff;
+  border-left: 4px solid #3937d8;
+  padding: 12px 14px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+.passwordInfo p {
+  margin: 0 0 8px 0;
+  font-size: 0.88rem;
+  color: #1e40af;
+  font-weight: 600;
+}
+
+.passwordInfo ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.passwordInfo ul li {
+  font-size: 0.85rem;
+  color: #1e40af;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.passwordInfo ul li:last-child {
+  margin-bottom: 0;
+}
+
+
 .footer {
- color: #e3e4f7;
+  color: #e3e4f7;
   text-align: center;
   padding: 10px;
   border-radius: 8px;
@@ -114,7 +218,6 @@
   background-color: #9C8189;
   margin-top: 10px;
 }
-
 
 /* ----------- RESPONSIVE BREAKPOINTS ----------- */
 
