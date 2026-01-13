@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/department.module.css";
 
@@ -53,12 +53,6 @@ function Department({ existingDepartment, onComplete }) {
       alert("Error saving department.");
     }
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <div className={styles.formPage}>
@@ -169,4 +163,5 @@ function Department({ existingDepartment, onComplete }) {
     </div>
   );
 }
+
 export default Department;

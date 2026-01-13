@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/project.module.css";
 import Header from "../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function ProjectForm({ existingProject, onComplete }) {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const [formData, setFormData] = useState({
     pname: "",
     cname: "",
@@ -15,6 +18,24 @@ function ProjectForm({ existingProject, onComplete }) {
     status: "",
     pdescription: "",
   });
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   useEffect(() => {
     if (existingProject) {
@@ -54,22 +75,21 @@ function ProjectForm({ existingProject, onComplete }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
 
   return (
     <div className={styles.formPage}>
-     <Header
-        title="Project Form"                  // Dynamic! Set based on page
-        showExport={false}                        // Only for pages needing Export
+      <Header
+        title="Project Form"
+        showExport={false}
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
+
       <div className={styles.formHeader}></div>
       <form className={styles.formContainer} onSubmit={handleSubmit}>
         <h3>
@@ -152,7 +172,7 @@ function ProjectForm({ existingProject, onComplete }) {
             required
           />
         </h3>
-        <button type="submit" className={styles.btnSubmit}>
+                <button type="submit" className={styles.btnSubmit}>
           {existingProject ? "Update" : "Submit"}
         </button>
       </form>
@@ -162,4 +182,6 @@ function ProjectForm({ existingProject, onComplete }) {
     </div>
   );
 }
+
 export default ProjectForm;
+

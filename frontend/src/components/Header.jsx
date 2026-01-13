@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { FaReact } from "react-icons/fa";
 import styles from "../styles/dashboard.module.css";
 
-// Header component
 function Header({
   title = "Welcome to Dashboard",
   showExport = false,
-  onExport, // function
+  onExport,
   showLogoutModal,
   setShowLogoutModal,
   handleLogout,
+  remainingTime, // Keep this for warning banner functionality
 }) {
   return (
     <header className={styles.header}>
@@ -30,23 +30,18 @@ function Header({
         <h5>Contact Us</h5>
       </nav>
       <div className={styles.right}>
+        {/* Session Timer Removed */}
+
         {showExport && typeof onExport === "function" && (
-          <h5
-            type="button"
-            className={styles.btnExport}
-            onClick={onExport}
-          >
+          <h5 type="button" className={styles.btnExport} onClick={onExport}>
             Export
           </h5>
         )}
-        <h5
-          onClick={() => setShowLogoutModal(true)}
-          className={styles.logoutBtn}
-        >
+        <h5 onClick={() => setShowLogoutModal(true)} className={styles.logoutBtn}>
           Logout
         </h5>
       </div>
-      {/* Logout Modal */}
+
       {showLogoutModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>

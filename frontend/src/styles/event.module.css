@@ -96,6 +96,29 @@
 }
 
 
+/* Session Warning Banner */
+.sessionWarningBanner {
+  background: #fff3e0;
+  border-left: 4px solid #f57c00;
+  padding: 12px 20px;
+  margin: 4px 0;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+.sessionWarningBanner p {
+  margin: 0;
+  color: #e65100;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+@keyframes pulse {
+  0%, 100% { background: #fff3e0; }
+  50% { background: #ffe0b2; }
+}
+
+
 /* ================== RESPONSIVE ONLY ================== */
 
 /* Tablets */

@@ -1,20 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import Project from "../edit/Project"; // Make sure your form component is ProjectForm!
+import Project from "../edit/Project";
 import axios from "axios";
 import styles from "../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function ProjectData() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const navigate = useNavigate();
 
-    const headerTitle = editing ? "Edit Project Data" : "Projects Data";
+  const headerTitle = editing ? "Edit Project Data" : "Projects Data";
 
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   const fetchProjects = async () => {
     const { data } = await axios.get("http://localhost:5000/projects");
@@ -39,8 +59,6 @@ function ProjectData() {
     fetchProjects();
   };
 
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
   const handleExport = () => {
     if (projects.length === 0) {
       alert("No data to export.");
@@ -53,11 +71,11 @@ function ProjectData() {
       "Start Date",
       "End Date / Deadline",
       "Project Status",
-      "Description"
+      "Description",
     ];
     const csvRows = [
       headers.join(","),
-      ...projects.map(proj =>
+      ...projects.map((proj) =>
         [
           `"${proj.pname}"`,
           `"${proj.cname}"`,
@@ -65,9 +83,9 @@ function ProjectData() {
           `"${proj.sdate ? new Date(proj.sdate).toLocaleDateString() : ""}"`,
           `"${proj.edate ? new Date(proj.edate).toLocaleDateString() : ""}"`,
           `"${proj.status}"`,
-          `"${proj.pdescription}"`
+          `"${proj.pdescription}"`,
         ].join(",")
-      )
+      ),
     ];
     const csvString = csvRows.join("\n");
     const blob = new Blob([csvString], { type: "text/csv" });
@@ -82,8 +100,8 @@ function ProjectData() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -95,17 +113,16 @@ function ProjectData() {
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
+
+    
+
       <main className={styles.mainContent}>
         {editing ? (
-          <div
-            style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}
-          >
+          <div style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}>
             <h2 style={{ textAlign: "center" }}>Edit Project Data</h2>
-            <Project
-              existingProject={editing}
-              onComplete={handleEditComplete}
-            />
+            <Project existingProject={editing} onComplete={handleEditComplete} />
             <button
               className={styles.btnCancel}
               style={{ marginTop: "5px" }}
@@ -137,16 +154,8 @@ function ProjectData() {
                   <td>{proj.pname}</td>
                   <td>{proj.cname}</td>
                   <td>{proj.pmanager}</td>
-                  <td>
-                    {proj.sdate
-                      ? new Date(proj.sdate).toLocaleDateString()
-                      : ""}
-                  </td>
-                  <td>
-                    {proj.edate
-                      ? new Date(proj.edate).toLocaleDateString()
-                      : ""}
-                  </td>
+                  <td>{proj.sdate ? new Date(proj.sdate).toLocaleDateString() : ""}</td>
+                  <td>{proj.edate ? new Date(proj.edate).toLocaleDateString() : ""}</td>
                   <td>{proj.status}</td>
                   <td>{proj.pdescription}</td>
                   <td>

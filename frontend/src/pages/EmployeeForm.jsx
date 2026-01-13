@@ -1,17 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/employee.module.css";
 import Header from "../components/Header";
-
-
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function EmployeeForm({ existingEmployee, onComplete }) {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const [formData, setFormData] = useState({
-    ename: "", dob: "", gender: "", email: "", pnumber: "",
-    address: "", designation: "", salary: "", joining_date: "", aadhar: ""
+    ename: "",
+    dob: "",
+    gender: "",
+    email: "",
+    pnumber: "",
+    address: "",
+    designation: "",
+    salary: "",
+    joining_date: "",
+    aadhar: "",
   });
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   useEffect(() => {
     if (existingEmployee) {
@@ -30,13 +57,17 @@ function EmployeeForm({ existingEmployee, onComplete }) {
     }
   }, [existingEmployee]);
 
-  const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (existingEmployee) {
-        await axios.put(`http://localhost:5000/employees/${existingEmployee._id}`, formData);
+        await axios.put(
+          `http://localhost:5000/employees/${existingEmployee._id}`,
+          formData
+        );
         alert("Employee updated!");
       } else {
         await axios.post("http://localhost:5000/employee", formData);
@@ -50,80 +81,145 @@ function EmployeeForm({ existingEmployee, onComplete }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
 
   return (
     <div className={styles.formPage}>
       <Header
-        title="Employee Form"                  // Dynamic! Set based on page
-        showExport={false}                        // Only for pages needing Export
+        title="Employee Form"
+        showExport={false}
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
-      <div className={styles.formHeader}>
-       
-      </div>
+
+    
+      <div className={styles.formHeader}></div>
       <form className={styles.formContainer} onSubmit={handleSubmit}>
-        <h3>Full Name:
-          <input type="text" name="ename"
-                 pattern="[A-Za-z\s]+" title="Only letters and spaces allowed"
-                 placeholder="Enter full name"
-                 value={formData.ename} onChange={handleChange} required />
+        <h3>
+          Full Name:
+          <input
+            type="text"
+            name="ename"
+            pattern="[A-Za-z\s]+"
+            title="Only letters and spaces allowed"
+            placeholder="Enter full name"
+            value={formData.ename}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Date of Birth:
-          <input type="date" name="dob"
-                 value={formData.dob} onChange={handleChange} required />
+        <h3>
+          Date of Birth:
+          <input
+            type="date"
+            name="dob"
+            value={formData.dob}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Gender:
-          <select name="gender" value={formData.gender} onChange={handleChange} required>
+        <h3>
+          Gender:
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            required
+          >
             <option value="">--Select--</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
         </h3>
-        <h3>Email:
-          <input type="email" name="email" placeholder="Enter email"
-                 value={formData.email} onChange={handleChange} required />
+        <h3>
+          Email:
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Phone Number:
-          <input type="number" name="pnumber" placeholder="Enter phone number"
-                 value={formData.pnumber} onChange={handleChange} required />
+        <h3>
+          Phone Number:
+          <input
+            type="number"
+            name="pnumber"
+            placeholder="Enter phone number"
+            value={formData.pnumber}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Address:
-          <input type="text" name="address" placeholder="Enter address"
-                 value={formData.address} onChange={handleChange} required />
+        <h3>
+          Address:
+          <input
+            type="text"
+            name="address"
+            placeholder="Enter address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Designation:
-          <input type="text" name="designation" placeholder="Enter designation"
-                 value={formData.designation} onChange={handleChange} required />
+        <h3>
+          Designation:
+          <input
+            type="text"
+            name="designation"
+            placeholder="Enter designation"
+            value={formData.designation}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Salary:
-          <input type="text" name="salary" placeholder="Enter salary"
-                 value={formData.salary} onChange={handleChange} required />
+        <h3>
+          Salary:
+          <input
+            type="text"
+            name="salary"
+            placeholder="Enter salary"
+            value={formData.salary}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Date of Joining:
-          <input type="date" name="joining_date"
-                 value={formData.joining_date} onChange={handleChange} required />
+        <h3>
+          Date of Joining:
+          <input
+            type="date"
+            name="joining_date"
+            value={formData.joining_date}
+            onChange={handleChange}
+            required
+          />
         </h3>
-        <h3>Aadhar Number / ID Proof:
-          <input type="text" name="aadhar" placeholder="Enter ID proof"
-                 value={formData.aadhar} onChange={handleChange} required />
+        <h3>
+          Aadhar Number / ID Proof:
+          <input
+            type="text"
+            name="aadhar"
+            placeholder="Enter ID proof"
+            value={formData.aadhar}
+            onChange={handleChange}
+            required
+          />
         </h3>
         <button type="submit" className={styles.btnSubmit}>
           {existingEmployee ? "Update" : "Submit"}
         </button>
       </form>
       <footer className={styles.footer}>
-      <small>© 2025 My App React. All rights reserved.</small>
-    </footer>
-
+        <small>© 2025 My App React. All rights reserved.</small>
+      </footer>
     </div>
   );
 }
+
 export default EmployeeForm;

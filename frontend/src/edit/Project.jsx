@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/project.module.css";
-import Header from "../components/Header";
 
 function Project({ existingProject, onComplete }) {
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ function Project({ existingProject, onComplete }) {
     pdescription: "",
   });
 
-  useEffect(() => {
+    useEffect(() => {
     if (existingProject) {
       setFormData({
         pname: existingProject.pname || "",
@@ -52,14 +51,6 @@ function Project({ existingProject, onComplete }) {
       alert("Error saving project.");
     }
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
 
   return (
     <div className={styles.formPage}>
@@ -152,4 +143,6 @@ function Project({ existingProject, onComplete }) {
     </div>
   );
 }
+
 export default Project;
+

@@ -1,22 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "../styles/dashboard.module.css";
-import Header from "../components/Header";
+import Header from "./Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function Dashboard() {
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
     }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -26,6 +39,7 @@ function Dashboard() {
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
 
       <div className={styles.all}>
@@ -70,27 +84,6 @@ function Dashboard() {
       <footer className={styles.footer}>
         <small>© 2025 My App React. All rights reserved.</small>
       </footer>
-
-      {/* Logout Modal */}
-      {showLogoutModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <h2>Confirm Logout</h2>
-            <p>Are you sure you want to log out?</p>
-            <div className={styles.modalBtns}>
-              <button className={styles.confirmBtn} onClick={handleLogout}>
-                Yes
-              </button>
-              <button
-                className={styles.cancelBtn}
-                onClick={() => setShowLogoutModal(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

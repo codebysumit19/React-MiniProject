@@ -6,15 +6,35 @@ import axios from "axios";
 import styles from "../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function DepartmentData() {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const navigate = useNavigate();
 
   const headerTitle = editing ? "Edit Department Data" : "Departments Data";
 
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   const fetchDepartments = async () => {
     try {
@@ -43,8 +63,6 @@ function DepartmentData() {
     setEditing(null);
     fetchDepartments();
   };
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleExport = () => {
     if (departments.length === 0) {
@@ -89,8 +107,8 @@ function DepartmentData() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -102,13 +120,14 @@ function DepartmentData() {
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
+
+     
 
       <main className={styles.mainContent}>
         {editing ? (
-          <div
-            style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}
-          >
+          <div style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}>
             <h2 style={{ textAlign: "center" }}>Edit Department Data</h2>
             <Department
               existingDepartment={editing}
@@ -153,7 +172,7 @@ function DepartmentData() {
                     <td>{dep.status}</td>
                     <td>{dep.description}</td>
                     <td>
-                      <FaEdit
+                                           <FaEdit
                         style={{ cursor: "pointer" }}
                         title="Edit"
                         onClick={() => handleEdit(dep)}

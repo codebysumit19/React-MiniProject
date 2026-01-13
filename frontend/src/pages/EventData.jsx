@@ -1,20 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import EventForm from "../edit/Event"; // Make sure this is your actual event edit form!
+import EventForm from "../edit/Event";
 import axios from "axios";
 import styles from "../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function EventData() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const navigate = useNavigate();
 
-  // Dynamic header!
   const headerTitle = editingEvent ? "Edit Event Data" : "Events Data";
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   const fetchEvents = async () => {
     const { data } = await axios.get("http://localhost:5000/events");
@@ -38,8 +58,6 @@ function EventData() {
     setEditingEvent(null);
     fetchEvents();
   };
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleExport = () => {
     if (events.length === 0) {
@@ -82,8 +100,8 @@ function EventData() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -95,12 +113,13 @@ function EventData() {
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
+
+   
       <main className={styles.mainContent}>
         {editingEvent ? (
-          <div
-            style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}
-          >
+          <div style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}>
             <h2 style={{ textAlign: "center" }}>Edit Event Data</h2>
             <EventForm
               existingEvent={editingEvent}
@@ -136,11 +155,7 @@ function EventData() {
                 <tr key={event._id}>
                   <td>{event.name}</td>
                   <td>{event.address}</td>
-                  <td>
-                    {event.date
-                      ? new Date(event.date).toLocaleDateString()
-                      : ""}
-                  </td>
+                  <td>{event.date ? new Date(event.date).toLocaleDateString() : ""}</td>
                   <td>{event.stime}</td>
                   <td>{event.etime}</td>
                   <td>{event.type}</td>

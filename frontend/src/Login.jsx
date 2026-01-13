@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./styles/signup.module.css";
 import { FaReact } from "react-icons/fa";
+import { isAuthenticated, setAuth } from "./utils/auth";
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
 
@@ -12,6 +13,13 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
 
   const validateEmail = (rawEmail) => {
     const email = rawEmail.trim().toLowerCase();
@@ -34,7 +42,6 @@ function Login() {
 
     const emailError = validateEmail(form.email);
     
-    // Check if password is only whitespace
     if (!form.password.trim()) {
       setErrors({
         email: emailError,
@@ -59,7 +66,9 @@ function Login() {
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
-      localStorage.setItem("token", res.data.token);
+      
+      // Store token with timestamp
+      setAuth(res.data.token);
       setFailedAttempts(0);
       navigate("/dashboard");
     } catch (err) {
@@ -82,7 +91,6 @@ function Login() {
   };
 
   const isFormValid = form.email.trim() !== "" && form.password.trim() !== "";
-
   const showAttemptsWarning = failedAttempts >= 3;
 
   return (
@@ -114,7 +122,7 @@ function Login() {
           )}
 
           <h3>Email:</h3>
-          <input
+                   <input
             type="email"
             placeholder="Email"
             value={form.email}
@@ -157,3 +165,5 @@ function Login() {
 }
 
 export default Login;
+
+            

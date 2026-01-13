@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./styles/signup.module.css";
 import { FaReact } from "react-icons/fa";
+import { isAuthenticated } from "./utils/auth";
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
 const passwordRegex =
@@ -24,6 +25,13 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
+
   const validateEmail = (rawEmail) => {
     const email = rawEmail.trim().toLowerCase();
     if (!email) return "Email is required";
@@ -36,7 +44,6 @@ function SignUp() {
 
   const validatePassword = (rawPassword) => {
     const password = rawPassword;
-    // Check for whitespace only FIRST
     if (!password.trim()) return "Password cannot be empty or only spaces";
     if (password.length < 8) return "Password is too short";
     if (password.length > 20) return "Password is too long";
@@ -56,16 +63,12 @@ function SignUp() {
     const newValue = field === "email" ? value.toLowerCase() : value;
 
     setForm((prev) => ({ ...prev, [field]: newValue }));
-
-    // Clear errors when typing
     setErrors((prev) => ({ ...prev, [field]: "" }));
 
-    // Only validate email in real-time, not password
     if (field === "email") {
       setErrors((prev) => ({ ...prev, email: validateEmail(newValue) }));
     }
 
-    // Validate confirm password only
     if (field === "confirmPassword") {
       setErrors((prev) => ({
         ...prev,

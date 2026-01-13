@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../styles/department.module.css";
 import Header from "../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function DepartmentForm({ existingDepartment, onComplete }) {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const [formData, setFormData] = useState({
     dname: "",
     email: "",
@@ -16,6 +19,24 @@ function DepartmentForm({ existingDepartment, onComplete }) {
     status: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   useEffect(() => {
     if (existingDepartment) {
@@ -56,21 +77,23 @@ function DepartmentForm({ existingDepartment, onComplete }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
 
   return (
     <div className={styles.formPage}>
       <Header
-        title="Department Form"                  // Dynamic! Set based on page
-        showExport={false}                        // Only for pages needing Export
+        title="Department Form"
+        showExport={false}
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
+
+     
+
       <div className={styles.formHeader}></div>
       <form className={styles.formContainer} onSubmit={handleSubmit}>
         <h3>
@@ -178,8 +201,8 @@ function DepartmentForm({ existingDepartment, onComplete }) {
       <footer className={styles.footer}>
         <small>© 2025 My App React. All rights reserved.</small>
       </footer>
-
     </div>
   );
 }
+
 export default DepartmentForm;

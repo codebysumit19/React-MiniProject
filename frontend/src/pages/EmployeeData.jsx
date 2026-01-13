@@ -1,20 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import Employee from "../edit/Employee"; // Make sure this is your form component!
+import Employee from "../edit/Employee";
 import axios from "axios";
 import styles from "../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
 
 function EmployeeData() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const navigate = useNavigate();
 
-    const headerTitle = editing ? "Edit Employee Data" : "Employees Data";
+  const headerTitle = editing ? "Edit Employee Data" : "Employees Data";
 
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (!isAuthenticated()) {
+        logout();
+        navigate("/login", { replace: true });
+      } else {
+        setRemainingTime(getRemainingTime());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   const fetchEmployees = async () => {
     const { data } = await axios.get("http://localhost:5000/employees");
@@ -22,7 +42,9 @@ function EmployeeData() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchEmployees(); }, []);
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
 
   const handleDelete = async (id) => {
     if (window.confirm("Delete this employee?")) {
@@ -37,7 +59,6 @@ function EmployeeData() {
     fetchEmployees();
   };
 
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleExport = () => {
     if (employees.length === 0) {
       alert("No data to export.");
@@ -53,11 +74,11 @@ function EmployeeData() {
       "Designation",
       "Salary",
       "Date of Joining",
-      "Aadhar Number / ID Proof"
+      "Aadhar Number / ID Proof",
     ];
     const csvRows = [
       headers.join(","),
-      ...employees.map(emp =>
+      ...employees.map((emp) =>
         [
           `"${emp.ename}"`,
           `"${emp.dob ? new Date(emp.dob).toLocaleDateString() : ""}"`,
@@ -68,12 +89,12 @@ function EmployeeData() {
           `"${emp.designation}"`,
           `"${emp.salary}"`,
           `"${emp.joining_date ? new Date(emp.joining_date).toLocaleDateString() : ""}"`,
-          `"${emp.aadhar}"`
+          `"${emp.aadhar}"`,
         ].join(",")
-      )
+      ),
     ];
     const csvString = csvRows.join("\n");
-    const blob = new Blob([csvString], {type: "text/csv"});
+    const blob = new Blob([csvString], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -85,8 +106,8 @@ function EmployeeData() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -98,16 +119,16 @@ function EmployeeData() {
         showLogoutModal={showLogoutModal}
         setShowLogoutModal={setShowLogoutModal}
         handleLogout={handleLogout}
+        remainingTime={remainingTime}
       />
+
+   
 
       <main className={styles.mainContent}>
         {editing ? (
           <div style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}>
             <h2 style={{ textAlign: "center" }}>Edit Employee Data</h2>
-            <Employee
-              existingEmployee={editing}
-              onComplete={handleEditComplete}
-            />
+            <Employee existingEmployee={editing} onComplete={handleEditComplete} />
             <button
               className={styles.btnCancel}
               style={{ marginTop: "5px" }}
@@ -137,7 +158,7 @@ function EmployeeData() {
               </tr>
             </thead>
             <tbody>
-              {employees.map(emp => (
+              {employees.map((emp) => (
                 <tr key={emp._id}>
                   <td>{emp.ename}</td>
                   <td>{emp.dob ? new Date(emp.dob).toLocaleDateString() : ""}</td>
