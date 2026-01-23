@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "../../styles/auth.module.css";
 import { FaReact } from "react-icons/fa";
@@ -114,10 +114,10 @@ function Login() {
     setErrors({ email: "", password: "" });
 
     try {
-      const res = await axios.post("http://localhost:5000/login", {
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-      });
+     const res = await api.post("/login", {
+  email: form.email.trim().toLowerCase(),
+  password: form.password,
+});
       
       localStorage.removeItem('failedLoginAttempts');
       localStorage.removeItem('lockoutUntil');

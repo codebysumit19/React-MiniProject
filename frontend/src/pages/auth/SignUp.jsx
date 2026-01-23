@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "../../styles/auth.module.css";
 import { FaReact } from "react-icons/fa";
@@ -79,11 +79,25 @@ function SignUp() {
     const nameError = form.name.trim() ? "" : "Name is required";
     const emailError = validateEmail(form.email);
     const passwordError = validatePassword(form.password);
-    const confirmError = validateConfirmPassword(form.password, form.confirmPassword);
-    const securityQuestionError = !form.securityQuestion ? "Please select a security question" : "";
-    const securityAnswerError = !form.securityAnswer.trim() ? "Please provide an answer" : "";
+    const confirmError = validateConfirmPassword(
+      form.password,
+      form.confirmPassword,
+    );
+    const securityQuestionError = !form.securityQuestion
+      ? "Please select a security question"
+      : "";
+    const securityAnswerError = !form.securityAnswer.trim()
+      ? "Please provide an answer"
+      : "";
 
-    if (nameError || emailError || passwordError || confirmError || securityQuestionError || securityAnswerError) {
+    if (
+      nameError ||
+      emailError ||
+      passwordError ||
+      confirmError ||
+      securityQuestionError ||
+      securityAnswerError
+    ) {
       setErrors({
         name: nameError,
         email: emailError,
@@ -99,7 +113,7 @@ function SignUp() {
     setErrors({});
 
     try {
-      await axios.post("http://localhost:5000/register", {
+      await api.post("/register", {
         name: form.name.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
@@ -118,7 +132,10 @@ function SignUp() {
           ...prev,
           email: "Email already exists",
         }));
-      } else if (msg.toLowerCase().includes("email") && msg.toLowerCase().includes("exist")) {
+      } else if (
+        msg.toLowerCase().includes("email") &&
+        msg.toLowerCase().includes("exist")
+      ) {
         setErrors((prev) => ({
           ...prev,
           email: "Email already exists",
@@ -230,7 +247,9 @@ function SignUp() {
             <option value="">--Select a security question--</option>
             <option value="pet">What was your first pet's name?</option>
             <option value="city">In which city were you born?</option>
-            <option value="school">What was the name of your first school?</option>
+            <option value="school">
+              What was the name of your first school?
+            </option>
             <option value="color">What is your favorite color?</option>
           </select>
           {errors.securityQuestion && (
@@ -246,7 +265,8 @@ function SignUp() {
             required
           />
           <p className={styles.hintText}>
-            ℹ️ This will be used to verify your identity if you forget your password
+            ℹ️ This will be used to verify your identity if you forget your
+            password
           </p>
           {errors.securityAnswer && (
             <p className={styles.errorText}>{errors.securityAnswer}</p>

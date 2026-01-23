@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/auth.module.css";
 import { FaReact, FaCheckCircle } from "react-icons/fa";
@@ -60,7 +60,7 @@ function ForgotPassword() {
     setErrors({});
 
     try {
-      const res = await axios.post("http://localhost:5000/forgot-password/check-email", {
+      const res = await api.post("/forgot-password/check-email", {
         email: email.trim().toLowerCase(),
       });
       
@@ -85,7 +85,7 @@ function ForgotPassword() {
     setErrors({});
 
     try {
-      const res = await axios.post("http://localhost:5000/forgot-password/verify-answer", {
+      const res = await api.post("/forgot-password/verify-answer", {
         email: email.trim().toLowerCase(),
         securityAnswer: securityAnswer.trim(),
       });
@@ -114,7 +114,7 @@ function ForgotPassword() {
     setErrors({});
 
     try {
-      await axios.post("http://localhost:5000/forgot-password/reset", {
+      await api.post("/forgot-password/reset", {
         token: resetToken,
         newPassword: newPassword,
       });

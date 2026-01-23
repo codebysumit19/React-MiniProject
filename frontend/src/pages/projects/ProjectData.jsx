@@ -7,7 +7,7 @@ import styles from "../../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
-//jhevbhdvb
+
 function ProjectData() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
