@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import styles from "../styles/department.module.css";
-import Header from "../components/Header";
-import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
+import styles from "../../styles/department.module.css";
+import Header from "../../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
 
 function DepartmentForm({ existingDepartment, onComplete }) {
   const navigate = useNavigate();
@@ -91,9 +91,6 @@ function DepartmentForm({ existingDepartment, onComplete }) {
         handleLogout={handleLogout}
         remainingTime={remainingTime}
       />
-
-     
-
       <div className={styles.formHeader}></div>
       <form className={styles.formContainer} onSubmit={handleSubmit}>
         <h3>

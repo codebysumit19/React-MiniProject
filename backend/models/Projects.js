@@ -4,7 +4,7 @@ const projectsSchema = new mongoose.Schema({
   pname: { type: String, required: true },
   cname: { type: String, required: true },
   pmanager: { type: String, required: true },
-  sdate: { type: Date, required: true },    // Use Date for date fields!
+  sdate: { type: Date, required: true },
   edate: { type: Date, required: true },
   status: {
     type: String,

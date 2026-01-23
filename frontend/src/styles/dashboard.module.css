@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .header {
   display: flex;
   align-items: center;
@@ -12,12 +13,14 @@
   border-radius: 10px;
   box-shadow: 0 2px 10px 0 rgba(160, 130, 195, 0.1);
   gap: 18px;
-  min-height: 38px; /* Lower minimum height */
+  min-height: 38px;
   font-family: "Inter", "Roboto", sans-serif;
 }
+
 .header h3 {
   font-size: larger;
 }
+
 .left {
   display: flex;
   align-items: center;
@@ -26,28 +29,31 @@
 
 .welcome {
   margin: 0;
-  font-size: 1.06rem; /* Smaller font size */
+  font-size: 1.06rem;
   color: #333;
   font-weight: 700;
   letter-spacing: -0.8px;
 }
+
 .Sections {
   display: flex;
   align-items: flex-end;
 }
 
 .Sections h5 {
-  font-size: 0.97rem; /* Slightly smaller nav text */
+  font-size: 0.97rem;
   padding: 0px 10px;
-  border-radius: 10px; /* Less padding */
+  border-radius: 10px;
   color: #1b1315;
 }
+
 a,
 .Sections a,
 .Sections a h5,
 .Sections h5 {
   text-decoration: none !important;
 }
+
 .Sections h5:hover {
   color: #fff;
 }
@@ -55,10 +61,8 @@ a,
 .right {
   display: flex;
   align-items: center;
-  /* This ensures items are aligned horizontally */
 }
 
-/* Logout button: margin-right for the gap */
 .logoutBtn {
   background: #ff4d6b;
   color: #342b2b;
@@ -67,7 +71,7 @@ a,
   font-size: 0.97rem;
   font-weight: 700;
   padding: 5px 12px;
-  margin-right: 5px; /* 5px gap to Export */
+  margin-right: 5px;
   cursor: pointer;
   transition: background 0.19s, transform 0.16s;
   box-shadow: 0 2px 12px rgba(255, 76, 107, 0.14);
@@ -79,7 +83,6 @@ a,
   transform: scale(1.08);
 }
 
-/* Export button: zero left margin to keep the gap tight */
 .btnExport {
   background: #6f67e5;
   color: #2d1717;
@@ -88,7 +91,7 @@ a,
   font-size: 0.97rem;
   font-weight: 700;
   padding: 5px 12px;
-  margin-right: 5px; /* 5px gap to Export */
+  margin-right: 5px;
   cursor: pointer;
   transition: background 0.19s, transform 0.16s;
   box-shadow: 0 2px 12px rgba(255, 76, 107, 0.14);
@@ -100,7 +103,6 @@ a,
   transform: scale(1.08);
 }
 
-/* Modal Overlay */
 .modalOverlay {
   position: fixed;
   z-index: 99;
@@ -114,7 +116,6 @@ a,
   justify-content: center;
 }
 
-/* Modal Box */
 .modal {
   background: #fff;
   padding: 28px 36px;
@@ -237,77 +238,10 @@ th a:hover {
   font-family: "Inter", sans-serif;
   box-shadow: 0 2px 8px 0 rgba(132, 79, 193, 0.04);
   background-color: #9c8189;
-  margin-top: auto; /* THIS makes it stick to the bottom! */
+  margin-top: auto;
 }
 
-/* Session Timer in Header */
-.sessionTimer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 5px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-right: 5px;
-}
-
-.clockIcon {
-  color: #3937d8;
-  font-size: 1rem;
-}
-
-.sessionTime {
-  color: #333;
-  font-size: 0.97rem;
-  font-weight: 700;
-}
-
-.sessionExpiring {
-  color: #dc2626;
-  font-size: 0.97rem;
-  font-weight: 700;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 50%, 100% { 
-    opacity: 1; 
-    transform: scale(1);
-  }
-  25%, 75% { 
-    opacity: 0.6; 
-    transform: scale(1.05);
-  }
-}
-
-/* Session Warning Banner */
-.sessionWarningBanner {
-  background: #fff3e0;
-  border-left: 4px solid #f57c00;
-  padding: 12px 20px;
-  margin: 0;
-  text-align: center;
-  animation: pulse 2s infinite;
-}
-
-.sessionWarningBanner p {
-  margin: 0;
-  color: #e65100;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-@keyframes pulse {
-  0%, 100% { background: #fff3e0; }
-  50% { background: #ffe0b2; }
-}
-
-
-/* ========== RESPONSIVE BREAKPOINTS ========== */
-
-/* For tablets and small desktops */
+/* Responsive */
 @media (max-width: 1100px) {
   .container {
     padding: 1.5rem 0.5rem;
@@ -324,7 +258,6 @@ th a:hover {
   }
 }
 
-/* For tablets and below */
 @media (max-width: 800px) {
   .header {
     flex-wrap: wrap;
@@ -360,7 +293,6 @@ th a:hover {
   }
 }
 
-/* For mobile phones */
 @media (max-width: 525px) {
   .header {
     min-height: 28px;
@@ -416,48 +348,5 @@ th a:hover {
     font-size: 0.86rem;
     border-radius: 2px;
     margin-top: auto;
-  }
-}
-
-
-/* Responsive for session timer */
-@media (max-width: 800px) {
-  .sessionTimer {
-    padding: 4px 10px;
-    margin-right: 3px;
-  }
-
-  .clockIcon {
-    font-size: 0.9rem;
-  }
-
-  .sessionTime,
-  .sessionExpiring {
-    font-size: 0.9rem;
-  }
-
-  .sessionWarningBanner p {
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 525px) {
-  .sessionTimer {
-    padding: 3px 8px;
-    font-size: 0.85rem;
-  }
-
-  .clockIcon {
-    font-size: 0.85rem;
-  }
-
-  .sessionTime,
-  .sessionExpiring {
-    font-size: 0.85rem;
-  }
-
-  .sessionWarningBanner p {
-    font-size: 0.88rem;
-    padding: 8px 5px;
   }
 }

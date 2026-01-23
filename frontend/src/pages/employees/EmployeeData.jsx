@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import Employee from "../edit/Employee";
+import Employee from "../../edit/Employee";
 import axios from "axios";
-import styles from "../styles/data.module.css";
+import styles from "../../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
+import Header from "../../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
 
 function EmployeeData() {
   const [employees, setEmployees] = useState([]);
@@ -105,7 +105,7 @@ function EmployeeData() {
     URL.revokeObjectURL(url);
   };
 
-  const handleLogout = () => {
+    const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
   };
@@ -121,8 +121,6 @@ function EmployeeData() {
         handleLogout={handleLogout}
         remainingTime={remainingTime}
       />
-
-   
 
       <main className={styles.mainContent}>
         {editing ? (
@@ -198,3 +196,4 @@ function EmployeeData() {
 }
 
 export default EmployeeData;
+

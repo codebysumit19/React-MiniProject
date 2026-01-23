@@ -6,8 +6,9 @@
 
 .mainContent {
   flex: 1;
-  padding: 4px 16px 16px 16px; /* Reduced top and bottom padding */
+  padding: 4px 16px 16px 16px;
 }
+
 .btnCancel {
   background: #2f54e5;
   color: #201c1c;
@@ -24,12 +25,13 @@
   background: #a3b2f1;
   color: #fffefe;
 }
+
 .table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   font-size: 1rem;
-  margin-top: 4px; /* Significantly less space above table */
+  margin-top: 4px;
   color: #24292f;
 }
 
@@ -64,33 +66,7 @@
   background-color: #9c8189;
 }
 
-/* Session Warning Banner */
-.sessionWarningBanner {
-  background: #fff3e0;
-  border-left: 4px solid #f57c00;
-  padding: 12px 20px;
-  margin: 0;
-  text-align: center;
-  animation: pulse 2s infinite;
-}
-
-.sessionWarningBanner p {
-  margin: 0;
-  color: #e65100;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-@keyframes pulse {
-  0%, 100% { background: #fff3e0; }
-  50% { background: #ffe0b2; }
-}
-
-
-
-/* ================== RESPONSIVE BREAKPOINTS ================== */
-
-/* Tablets */
+/* Responsive */
 @media (max-width: 900px) {
   .mainContent {
     padding: 3px 3vw 12px 3vw;
@@ -105,7 +81,6 @@
   }
 }
 
-/* Mobile phones */
 @media (max-width: 600px) {
   .mainContent {
     padding: 1px 1vw 7px 1vw;
@@ -127,3 +102,5 @@
     min-height: 96vh;
   }
 }
+
+  

@@ -10,7 +10,7 @@ function Header({
   showLogoutModal,
   setShowLogoutModal,
   handleLogout,
-  remainingTime, // Keep this for warning banner functionality
+  remainingTime,
 }) {
   return (
     <header className={styles.header}>
@@ -30,8 +30,6 @@ function Header({
         <h5>Contact Us</h5>
       </nav>
       <div className={styles.right}>
-        {/* Session Timer Removed */}
-
         {showExport && typeof onExport === "function" && (
           <h5 type="button" className={styles.btnExport} onClick={onExport}>
             Export

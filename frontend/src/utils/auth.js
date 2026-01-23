@@ -1,5 +1,5 @@
-// Session duration: 1 hour
-export const SESSION_DURATION = 5 * 60 * 1000; // 1 hour in milliseconds
+// Session duration: 5 minutes
+export const SESSION_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 // Check if user is authenticated
 export const isAuthenticated = () => {
@@ -14,7 +14,6 @@ export const isAuthenticated = () => {
   const elapsed = currentTime - parseInt(loginTime);
   
   if (elapsed > SESSION_DURATION) {
-    // Token expired, clear storage
     logout();
     return false;
   }

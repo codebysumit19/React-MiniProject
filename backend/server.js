@@ -4,11 +4,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import User from "./models/User.js";
 import Projects from "./models/Projects.js";
 import Events from "./models/Events.js";
 import Departments from "./models/Departments.js";
 import Employees from "./models/Employees.js";
+import PasswordReset from "./models/PasswordReset.js";
 
 dotenv.config();
 const app = express();
@@ -26,9 +28,8 @@ mongoose
 
 // Register
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, securityQuestion, securityAnswer } = req.body;
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ 
@@ -37,12 +38,13 @@ app.post("/register", async (req, res) => {
       });
     }
 
-    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
     await User.create({ 
       name, 
       email: email.toLowerCase(), 
-      password: hashedPassword 
+      password: hashedPassword,
+      securityQuestion,
+      securityAnswer: securityAnswer.toLowerCase().trim()
     });
     
     res.json({ msg: "User registered successfully" });
@@ -56,29 +58,24 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Find user by email
     const user = await User.findOne({ email: email.toLowerCase() });
     
     if (!user) {
-      // User not found - Email is incorrect
       return res.status(404).json({ 
         msg: "User not found",
         type: "email"
       });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     
     if (!isMatch) {
-      // Wrong password - Password is incorrect
       return res.status(401).json({ 
         msg: "Password is incorrect",
         type: "password"
       });
     }
 
-    // Success - Generate token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -102,9 +99,102 @@ app.get("/verify", (req, res) => {
   });
 });
 
+// === PASSWORD RESET ROUTES ===
+
+// Step 1: Check if email exists and return security question
+app.post("/forgot-password/check-email", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      return res.status(404).json({ msg: "Email not found" });
+    }
+
+    res.json({ 
+      securityQuestion: user.securityQuestion,
+      msg: "Email verified"
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// Step 2: Verify security answer and generate reset token
+app.post("/forgot-password/verify-answer", async (req, res) => {
+  const { email, securityAnswer } = req.body;
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (user.securityAnswer.toLowerCase() !== securityAnswer.toLowerCase().trim()) {
+      return res.status(400).json({ msg: "Incorrect security answer" });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    
+    await PasswordReset.deleteMany({ userId: user._id });
+    
+    await PasswordReset.create({
+      userId: user._id,
+      token: resetToken,
+    });
+
+    console.log("=== PASSWORD RESET TOKEN ===");
+    console.log(`User: ${user.email}`);
+    console.log(`Token: ${resetToken}`);
+    console.log("============================");
+
+    res.json({ 
+      msg: "Security answer verified!",
+      resetToken: resetToken
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+// Step 3: Reset password with token
+app.post("/forgot-password/reset", async (req, res) => {
+  const { token, newPassword } = req.body;
+  
+  try {
+    const resetRecord = await PasswordReset.findOne({ token });
+    
+    if (!resetRecord) {
+      return res.status(400).json({ msg: "Invalid or expired reset token" });
+    }
+
+    const user = await User.findById(resetRecord.userId);
+    
+    if (!user) {
+      return res.status(400).json({ msg: "User not found" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    user.password = hashedPassword;
+    await user.save();
+
+    await PasswordReset.deleteMany({ userId: user._id });
+
+    res.json({ msg: "Password reset successful!" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 // === EVENTS ===
 
-// Create Event
 app.post("/events", async (req, res) => {
   try {
     const { name, address, date, stime, etime, type, happend } = req.body;
@@ -125,7 +215,6 @@ app.post("/events", async (req, res) => {
   }
 });
 
-// List Events
 app.get("/events", async (req, res) => {
   try {
     const events = await Events.find();
@@ -136,7 +225,6 @@ app.get("/events", async (req, res) => {
   }
 });
 
-// DELETE event by ID
 app.delete("/events/:id", async (req, res) => {
   try {
     await Events.findByIdAndDelete(req.params.id);
@@ -146,7 +234,6 @@ app.delete("/events/:id", async (req, res) => {
   }
 });
 
-// UPDATE event by ID
 app.put("/events/:id", async (req, res) => {
   try {
     await Events.findByIdAndUpdate(req.params.id, req.body);
@@ -158,7 +245,6 @@ app.put("/events/:id", async (req, res) => {
 
 // === DEPARTMENTS ===
 
-// Create Department
 app.post("/department", async (req, res) => {
   try {
     const { dname, email, number, nemployees, resp, budget, status, description } = req.body;
@@ -180,7 +266,6 @@ app.post("/department", async (req, res) => {
   }
 });
 
-// List Departments
 app.get("/departments", async (req, res) => {
   try {
     const departments = await Departments.find();
@@ -191,7 +276,6 @@ app.get("/departments", async (req, res) => {
   }
 });
 
-// DELETE department by ID
 app.delete("/departments/:id", async (req, res) => {
   try {
     await Departments.findByIdAndDelete(req.params.id);
@@ -201,7 +285,6 @@ app.delete("/departments/:id", async (req, res) => {
   }
 });
 
-// UPDATE department by ID
 app.put("/departments/:id", async (req, res) => {
   try {
     await Departments.findByIdAndUpdate(req.params.id, req.body);
@@ -213,7 +296,6 @@ app.put("/departments/:id", async (req, res) => {
 
 // === EMPLOYEES ===
 
-// Create Employee
 app.post("/employee", async (req, res) => {
   try {
     const {
@@ -248,7 +330,6 @@ app.post("/employee", async (req, res) => {
   }
 });
 
-// List Employees
 app.get("/employees", async (req, res) => {
   try {
     const employees = await Employees.find();
@@ -259,7 +340,6 @@ app.get("/employees", async (req, res) => {
   }
 });
 
-// DELETE employee by ID
 app.delete("/employees/:id", async (req, res) => {
   try {
     await Employees.findByIdAndDelete(req.params.id);
@@ -269,7 +349,6 @@ app.delete("/employees/:id", async (req, res) => {
   }
 });
 
-// UPDATE employee by ID
 app.put("/employees/:id", async (req, res) => {
   try {
     await Employees.findByIdAndUpdate(req.params.id, req.body);
@@ -281,7 +360,6 @@ app.put("/employees/:id", async (req, res) => {
 
 // === PROJECTS ===
 
-// Create Project
 app.post("/projects", async (req, res) => {
   try {
     const {
@@ -310,7 +388,6 @@ app.post("/projects", async (req, res) => {
   }
 });
 
-// List Projects
 app.get("/projects", async (req, res) => {
   try {
     const projects = await Projects.find();
@@ -321,7 +398,6 @@ app.get("/projects", async (req, res) => {
   }
 });
 
-// DELETE project by ID
 app.delete("/projects/:id", async (req, res) => {
   try {
     await Projects.findByIdAndDelete(req.params.id);
@@ -331,7 +407,6 @@ app.delete("/projects/:id", async (req, res) => {
   }
 });
 
-// UPDATE project by ID
 app.put("/projects/:id", async (req, res) => {
   try {
     await Projects.findByIdAndUpdate(req.params.id, req.body);
@@ -345,3 +420,4 @@ app.put("/projects/:id", async (req, res) => {
 app.listen(process.env.PORT || 5000, () =>
   console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
 );
+

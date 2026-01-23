@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import styles from "../styles/event.module.css";
-import Header from "../components/Header";
-import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
+import styles from "../../styles/event.module.css";
+import Header from "../../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
 
 function EventForm({ existingEvent, onComplete }) {
   const navigate = useNavigate();
@@ -89,9 +89,6 @@ function EventForm({ existingEvent, onComplete }) {
         handleLogout={handleLogout}
         remainingTime={remainingTime}
       />
-
- 
-
       <div className={styles.formHeader}></div>
       <form className={styles.formContainer} onSubmit={handleSubmit}>
         <h3>
@@ -190,7 +187,6 @@ function EventForm({ existingEvent, onComplete }) {
           {existingEvent ? "Update" : "Submit"}
         </button>
       </form>
-
       <footer className={styles.footer}>
         <small>© 2025 My App React. All rights reserved.</small>
       </footer>
@@ -199,4 +195,3 @@ function EventForm({ existingEvent, onComplete }) {
 }
 
 export default EventForm;
-

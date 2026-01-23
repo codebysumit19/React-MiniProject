@@ -1,23 +1,26 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import SignUp from "./SignUp";
-import Login from "./Login";
+import SignUp from "./pages/auth/SignUp";
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 import Dashboard from "./components/Dashboard";
-import EventForm from "./pages/EventForm";
-import EventData from "./pages/EventData";
-import EmployeeForm from "./pages/EmployeeForm";
-import EmployeeData from "./pages/EmployeeData";
-import DepartmentForm from "./pages/DepartmentForm";
-import DepartmentData from "./pages/DepartmentData";
-import ProjectForm from "./pages/ProjectForm";
-import ProjectData from "./pages/ProjectData";
+import EventForm from "./pages/events/EventForm";
+import EventData from "./pages/events/EventData";
+import EmployeeForm from "./pages/employees/EmployeeForm";
+import EmployeeData from "./pages/employees/EmployeeData";
+import DepartmentForm from "./pages/departments/DepartmentForm";
+import DepartmentData from "./pages/departments/DepartmentData";
+import ProjectForm from "./pages/projects/ProjectForm";
+import ProjectData from "./pages/projects/ProjectData";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* Protected Routes */}
         <Route 
@@ -93,7 +96,6 @@ function App() {
           } 
         />
 
-        {/* Redirect any unknown routes to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>

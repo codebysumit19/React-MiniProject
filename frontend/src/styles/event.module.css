@@ -4,6 +4,7 @@
   flex-direction: column;
   background: #f7f9fc;
 }
+
 .btnSubmit {
   background: #3d73a0;
   color: #fff;
@@ -17,6 +18,7 @@
   transition: background 0.2s;
   width: 100%;
 }
+
 .btnSubmit:hover {
   background: #877cb3;
 }
@@ -66,6 +68,7 @@
   background: #f6f6fb;
   transition: border 0.2s;
 }
+
 .formContainer input:focus,
 .formContainer textarea:focus {
   outline: none;
@@ -95,33 +98,7 @@
   background-color: #9c8189;
 }
 
-
-/* Session Warning Banner */
-.sessionWarningBanner {
-  background: #fff3e0;
-  border-left: 4px solid #f57c00;
-  padding: 12px 20px;
-  margin: 4px 0;
-  text-align: center;
-  animation: pulse 2s infinite;
-}
-
-.sessionWarningBanner p {
-  margin: 0;
-  color: #e65100;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-@keyframes pulse {
-  0%, 100% { background: #fff3e0; }
-  50% { background: #ffe0b2; }
-}
-
-
-/* ================== RESPONSIVE ONLY ================== */
-
-/* Tablets */
+/* Responsive */
 @media (max-width: 900px) {
   .formHeader {
     padding: 7px 10px;
@@ -148,7 +125,6 @@
   }
 }
 
-/* Phones */
 @media (max-width: 600px) {
   .formPage {
     min-height: 96vh;

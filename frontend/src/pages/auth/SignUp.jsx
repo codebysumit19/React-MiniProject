@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import styles from "./styles/signup.module.css";
+import styles from "../../styles/auth.module.css";
 import { FaReact } from "react-icons/fa";
-import { isAuthenticated } from "./utils/auth";
+import { isAuthenticated } from "../../utils/auth";
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
 const passwordRegex =
@@ -15,17 +15,13 @@ function SignUp() {
     email: "",
     password: "",
     confirmPassword: "",
+    securityQuestion: "",
+    securityAnswer: "",
   });
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated()) {
       navigate("/dashboard", { replace: true });
@@ -83,29 +79,32 @@ function SignUp() {
     const nameError = form.name.trim() ? "" : "Name is required";
     const emailError = validateEmail(form.email);
     const passwordError = validatePassword(form.password);
-    const confirmError = validateConfirmPassword(
-      form.password,
-      form.confirmPassword
-    );
+    const confirmError = validateConfirmPassword(form.password, form.confirmPassword);
+    const securityQuestionError = !form.securityQuestion ? "Please select a security question" : "";
+    const securityAnswerError = !form.securityAnswer.trim() ? "Please provide an answer" : "";
 
-    if (nameError || emailError || passwordError || confirmError) {
+    if (nameError || emailError || passwordError || confirmError || securityQuestionError || securityAnswerError) {
       setErrors({
         name: nameError,
         email: emailError,
         password: passwordError,
         confirmPassword: confirmError,
+        securityQuestion: securityQuestionError,
+        securityAnswer: securityAnswerError,
       });
       return;
     }
 
     setLoading(true);
-    setErrors({ name: "", email: "", password: "", confirmPassword: "" });
+    setErrors({});
 
     try {
       await axios.post("http://localhost:5000/register", {
         name: form.name.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
+        securityQuestion: form.securityQuestion,
+        securityAnswer: form.securityAnswer.trim(),
       });
       navigate("/login");
     } catch (err) {
@@ -127,7 +126,6 @@ function SignUp() {
       } else {
         setErrors((prev) => ({
           ...prev,
-          email: "",
           password: msg,
         }));
       }
@@ -140,7 +138,9 @@ function SignUp() {
     form.name.trim() &&
     form.email.trim() &&
     form.password.trim() &&
-    form.confirmPassword.trim();
+    form.confirmPassword.trim() &&
+    form.securityQuestion &&
+    form.securityAnswer.trim();
 
   return (
     <div className={styles.pageWrapper}>
@@ -219,6 +219,37 @@ function SignUp() {
           />
           {errors.confirmPassword && (
             <p className={styles.errorText}>{errors.confirmPassword}</p>
+          )}
+
+          <h3>Security Question:</h3>
+          <select
+            value={form.securityQuestion}
+            onChange={(e) => handleChange("securityQuestion", e.target.value)}
+            required
+          >
+            <option value="">--Select a security question--</option>
+            <option value="pet">What was your first pet's name?</option>
+            <option value="city">In which city were you born?</option>
+            <option value="school">What was the name of your first school?</option>
+            <option value="color">What is your favorite color?</option>
+          </select>
+          {errors.securityQuestion && (
+            <p className={styles.errorText}>{errors.securityQuestion}</p>
+          )}
+
+          <h3>Security Answer:</h3>
+          <input
+            type="text"
+            placeholder="Your answer"
+            value={form.securityAnswer}
+            onChange={(e) => handleChange("securityAnswer", e.target.value)}
+            required
+          />
+          <p className={styles.hintText}>
+            ℹ️ This will be used to verify your identity if you forget your password
+          </p>
+          {errors.securityAnswer && (
+            <p className={styles.errorText}>{errors.securityAnswer}</p>
           )}
 
           <button type="submit" disabled={!isFormValid || loading}>

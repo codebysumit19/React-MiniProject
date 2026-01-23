@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import Project from "../edit/Project";
+import EventForm from "../../edit/Event";
 import axios from "axios";
-import styles from "../styles/data.module.css";
+import styles from "../../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
+import Header from "../../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
 
-function ProjectData() {
-  const [projects, setProjects] = useState([]);
+function EventData() {
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(null);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const navigate = useNavigate();
 
-  const headerTitle = editing ? "Edit Project Data" : "Projects Data";
+  const headerTitle = editingEvent ? "Edit Event Data" : "Events Data";
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -36,54 +36,54 @@ function ProjectData() {
     return () => clearInterval(interval);
   }, [navigate]);
 
-  const fetchProjects = async () => {
-    const { data } = await axios.get("http://localhost:5000/projects");
-    setProjects(data);
+  const fetchEvents = async () => {
+    const { data } = await axios.get("http://localhost:5000/events");
+    setEvents(data);
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchProjects();
+    fetchEvents();
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this project?")) {
-      await axios.delete(`http://localhost:5000/projects/${id}`);
-      fetchProjects();
+    if (window.confirm("Delete this event?")) {
+      await axios.delete(`http://localhost:5000/events/${id}`);
+      fetchEvents();
     }
   };
 
-  const handleEdit = (proj) => setEditing(proj);
+  const handleEdit = (event) => setEditingEvent(event);
   const handleEditComplete = () => {
-    setEditing(null);
-    fetchProjects();
+    setEditingEvent(null);
+    fetchEvents();
   };
 
   const handleExport = () => {
-    if (projects.length === 0) {
+    if (events.length === 0) {
       alert("No data to export.");
       return;
     }
     const headers = [
-      "Project Name",
-      "Client / Company Name",
-      "Project Manager",
-      "Start Date",
-      "End Date / Deadline",
-      "Project Status",
-      "Description",
+      "Event Name",
+      "Event Address",
+      "Event Date",
+      "Start Time",
+      "End Time",
+      "Type",
+      "Happened",
     ];
     const csvRows = [
       headers.join(","),
-      ...projects.map((proj) =>
+      ...events.map((event) =>
         [
-          `"${proj.pname}"`,
-          `"${proj.cname}"`,
-          `"${proj.pmanager}"`,
-          `"${proj.sdate ? new Date(proj.sdate).toLocaleDateString() : ""}"`,
-          `"${proj.edate ? new Date(proj.edate).toLocaleDateString() : ""}"`,
-          `"${proj.status}"`,
-          `"${proj.pdescription}"`,
+          `"${event.name}"`,
+          `"${event.address}"`,
+          `"${event.date ? new Date(event.date).toLocaleDateString() : ""}"`,
+          `"${event.stime}"`,
+          `"${event.etime}"`,
+          `"${event.type}"`,
+          `"${event.happend}"`,
         ].join(",")
       ),
     ];
@@ -92,7 +92,7 @@ function ProjectData() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "projects.csv";
+    a.download = "events.csv";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -116,17 +116,18 @@ function ProjectData() {
         remainingTime={remainingTime}
       />
 
-    
-
       <main className={styles.mainContent}>
-        {editing ? (
+        {editingEvent ? (
           <div style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}>
-            <h2 style={{ textAlign: "center" }}>Edit Project Data</h2>
-            <Project existingProject={editing} onComplete={handleEditComplete} />
+            <h2 style={{ textAlign: "center" }}>Edit Event Data</h2>
+            <EventForm
+              existingEvent={editingEvent}
+              onComplete={handleEditComplete}
+            />
             <button
               className={styles.btnCancel}
               style={{ marginTop: "5px" }}
-              onClick={() => setEditing(null)}
+              onClick={() => setEditingEvent(null)}
             >
               Cancel
             </button>
@@ -137,39 +138,39 @@ function ProjectData() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Project Name</th>
-                <th>Client / Company Name</th>
-                <th>Project Manager</th>
-                <th>Start Date</th>
-                <th>End Date / Deadline</th>
-                <th>Project Status</th>
-                <th>Description</th>
+                <th>Event Name</th>
+                <th>Event Address</th>
+                <th>Event Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Type</th>
+                <th>Happened</th>
                 <th>Edit</th>
                 <th>Delete</th>
               </tr>
             </thead>
             <tbody>
-              {projects.map((proj) => (
-                <tr key={proj._id}>
-                  <td>{proj.pname}</td>
-                  <td>{proj.cname}</td>
-                  <td>{proj.pmanager}</td>
-                  <td>{proj.sdate ? new Date(proj.sdate).toLocaleDateString() : ""}</td>
-                  <td>{proj.edate ? new Date(proj.edate).toLocaleDateString() : ""}</td>
-                  <td>{proj.status}</td>
-                  <td>{proj.pdescription}</td>
-                  <td>
+              {events.map((event) => (
+                <tr key={event._id}>
+                  <td>{event.name}</td>
+                  <td>{event.address}</td>
+                  <td>{event.date ? new Date(event.date).toLocaleDateString() : ""}</td>
+                  <td>{event.stime}</td>
+                  <td>{event.etime}</td>
+                  <td>{event.type}</td>
+                  <td>{event.happend}</td>
+                                   <td>
                     <FaEdit
                       style={{ cursor: "pointer" }}
                       title="Edit"
-                      onClick={() => handleEdit(proj)}
+                      onClick={() => handleEdit(event)}
                     />
                   </td>
                   <td>
                     <MdDelete
                       style={{ cursor: "pointer" }}
                       title="Delete"
-                      onClick={() => handleDelete(proj._id)}
+                      onClick={() => handleDelete(event._id)}
                     />
                   </td>
                 </tr>
@@ -185,4 +186,5 @@ function ProjectData() {
   );
 }
 
-export default ProjectData;
+export default EventData;
+

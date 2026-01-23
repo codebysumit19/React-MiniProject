@@ -15,7 +15,7 @@ function Project({ existingProject, onComplete }) {
     pdescription: "",
   });
 
-    useEffect(() => {
+  useEffect(() => {
     if (existingProject) {
       setFormData({
         pname: existingProject.pname || "",
@@ -145,4 +145,3 @@ function Project({ existingProject, onComplete }) {
 }
 
 export default Project;
-

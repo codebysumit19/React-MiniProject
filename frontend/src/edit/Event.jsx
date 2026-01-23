@@ -82,7 +82,7 @@ function Event({ existingEvent, onComplete }) {
             required
           />
         </h3>
-        <h3>
+                <h3>
           Event Date:
           <input
             type="date"
@@ -157,3 +157,4 @@ function Event({ existingEvent, onComplete }) {
 }
 
 export default Event;
+

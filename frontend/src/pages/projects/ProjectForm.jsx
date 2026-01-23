@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import styles from "../styles/project.module.css";
-import Header from "../components/Header";
-import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
+import styles from "../../styles/project.module.css";
+import Header from "../../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
 
 function ProjectForm({ existingProject, onComplete }) {
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ function ProjectForm({ existingProject, onComplete }) {
     }
   };
 
-  const handleLogout = () => {
+    const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
   };
@@ -89,7 +89,6 @@ function ProjectForm({ existingProject, onComplete }) {
         handleLogout={handleLogout}
         remainingTime={remainingTime}
       />
-
       <div className={styles.formHeader}></div>
       <form className={styles.formContainer} onSubmit={handleSubmit}>
         <h3>
@@ -172,7 +171,7 @@ function ProjectForm({ existingProject, onComplete }) {
             required
           />
         </h3>
-                <button type="submit" className={styles.btnSubmit}>
+        <button type="submit" className={styles.btnSubmit}>
           {existingProject ? "Update" : "Submit"}
         </button>
       </form>

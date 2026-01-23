@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import Department from "../edit/Department";
+import Department from "../../edit/Department";
 import axios from "axios";
-import styles from "../styles/data.module.css";
+import styles from "../../styles/data.module.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import { isAuthenticated, logout, getRemainingTime } from "../utils/auth";
+import Header from "../../components/Header";
+import { isAuthenticated, logout, getRemainingTime } from "../../utils/auth";
 
 function DepartmentData() {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(getRemainingTime());
+    const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const navigate = useNavigate();
 
   const headerTitle = editing ? "Edit Department Data" : "Departments Data";
@@ -123,8 +123,6 @@ function DepartmentData() {
         remainingTime={remainingTime}
       />
 
-     
-
       <main className={styles.mainContent}>
         {editing ? (
           <div style={{ background: "#f9f9f9", padding: "20px", margin: "16px 0" }}>
@@ -172,7 +170,7 @@ function DepartmentData() {
                     <td>{dep.status}</td>
                     <td>{dep.description}</td>
                     <td>
-                                           <FaEdit
+                      <FaEdit
                         style={{ cursor: "pointer" }}
                         title="Edit"
                         onClick={() => handleEdit(dep)}
@@ -204,3 +202,4 @@ function DepartmentData() {
 }
 
 export default DepartmentData;
+
